@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<installer-gui-script minSpecVersion="1">
+    <options hostArchitectures="i386,x86_64" rootVolumeOnly="true" visibleOnlyForPredicate="true" require-scripts="true" launch="true" customize="never" launchMode="integrated"/>
+    <title>SU_TITLE</title>
+    <script/>
+    <volume-check script="VolumeCheck()">
+        <allowed-os-versions>
+            <os-version min="10.8"/>
+        </allowed-os-versions>
+    </volume-check>
+    <installation-check script="InstallationCheck()"/>
+    <tags>
+        <tag>SUBUNDLE:com.apple.InstallAssistant.Seed.macOS1013Seed1</tag>
+        <tag>CUSTOMER</tag>
+    </tags>
+    <auxinfo>
+        <dict>
+            <key>BUILD</key>
+            <string>17E160g</string>
+            <key>VERSION</key>
+            <string>10.13.4</string>
+        </dict>
+    </auxinfo>
+    <platforms>
+        <client arch="i386"/>
+        <server arch="i386"/>
+    </platforms>
+    <choices-outline ui="SoftwareUpdate">
+        <line choice="InstallAssistantAuto"/>
+    </choices-outline>
+    <choices-outline ui="InstallAssistant">
+        <line choice="InstallAssistantShell"/>
+    </choices-outline>
+    <choices-outline>
+        <line choice="InstallAssistantAuto"/>
+    </choices-outline>
+    <choice id="InstallAssistantAuto" description-mime-type="text/html" secondaryDescription="SU_SERVERCOMMENT" suDisabledGroupID="Install macOS High Sierra Beta" start_selected="true" versStr="SU_VERS" description="SU_DESCRIPTION" title="SU_TITLE" start_enabled="true">
+        <pkg-ref id="InstallAssistantAuto" auth="Root" packageIdentifier="com.apple.pkg.InstallAssistantAuto">InstallAssistantAuto.pkg</pkg-ref>
+        <pkg-ref id="InstallESDDmg" auth="Root" packageIdentifier="com.apple.pkg.InstallESDDmg">InstallESDDmg.pkg</pkg-ref>
+        <pkg-ref id="RecoveryHDMetaDmg" auth="Root" packageIdentifier="com.apple.pkg.RecoveryHDMetaDmg">RecoveryHDMetaDmg.pkg</pkg-ref>
+    </choice>
+    <choice id="InstallAssistantShell" title="SU_TITLE" start_enabled="true" start_selected="true">
+        <pkg-ref id="InstallESDDmg" auth="Root" packageIdentifier="com.apple.pkg.InstallESDDmg">InstallESDDmg.pkg</pkg-ref>
+        <pkg-ref id="OSInstall.mpkg" auth="Root" packageIdentifier="com.apple.mpkg.OSInstall">OSInstall.mpkg</pkg-ref>
+        <pkg-ref id="BaseSystem.dmg" auth="Root" packageIdentifier="com.apple.dmg.BaseSystem">BaseSystem.dmg</pkg-ref>
+        <pkg-ref id="BaseSystem.chunklist" auth="Root" packageIdentifier="com.apple.chunklist.BaseSystem">BaseSystem.chunklist</pkg-ref>
+        <pkg-ref id="AppleDiagnostics.dmg" auth="Root" packageIdentifier="com.apple.dmg.AppleDiagnostics">AppleDiagnostics.dmg</pkg-ref>
+        <pkg-ref id="AppleDiagnostics.chunklist" auth="Root" packageIdentifier="com.apple.chunklist.AppleDiagnostics">AppleDiagnostics.chunklist</pkg-ref>
+        <pkg-ref id="InstallESDDmg.chunklist" auth="Root" packageIdentifier="com.apple.chunklist.InstallESDDmg">InstallESDDmg.chunklist</pkg-ref>
+        <pkg-ref id="InstallInfo.plist" auth="Root" packageIdentifier="com.apple.plist.InstallInfo">InstallInfo.plist</pkg-ref>
+    </choice>
+    <script>
+function InstallationCheck(prefix) {
+	var boardIds = ['Mac-06F11F11946D27C5','Mac-031B6874CF7F642A','Mac-A5C67F76ED83108C','Mac-CAD6701F7CEA0921','Mac-50619A408DB004DA','Mac-7BA5B2D9E42DDD94','Mac-742912EFDBEE19B3','Mac-65CE76090165799A','Mac-473D31EABEB93F9B','Mac-AFD8A9D944EA4843','Mac-F2268DC8','Mac-942B59F58194171B','Mac-B809C3757DA9BB8D','Mac-7DF2A3B5E5D671ED','Mac-35C1E88140C3E6CF','Mac-942459F5819B171B','Mac-77EB7D7DAF985301','Mac-F65AE981FFA204ED','Mac-2E6FAB96566FE58C','Mac-BE0E8AC46FE800CC','Mac-00BE6ED71E35EB86','Mac-4B7AC7E43945597E','Mac-F22C89C8','Mac-937CB26E2E02BB01','Mac-35C5E08120C7EEAF','Mac-FFE5EF870D7BA81A','Mac-F222BEC8','Mac-42FD25EABCABB274','Mac-4B682C642B45593E','Mac-90BE64C3CB5A9AEB','Mac-F2208EC8','Mac-031AEE4D24BFF0B1','Mac-66F35F19FE2A0D05','Mac-189A3D4F975D5FFC','Mac-B4831CEBD52A0C4C','Mac-F2268DAE','Mac-8ED6AF5B48C039E1','Mac-FA842E06C61E91C5','Mac-FC02E91DDD3FA6A4','Mac-06F11FD93F0323C5','Mac-9AE82516C7C6B903','Mac-27ADBB7B4CEE8E61','Mac-6F01561E16C75D06','Mac-C08A6BB70A942AC2','Mac-81E3E92DD6088272','Mac-7DF21CB3ED6977E5','Mac-3CBD00234E554E41','Mac-F22586C8','Mac-F221BEC8','Mac-942C5DF58193131B','Mac-F2238BAE','Mac-9F18E312C5C2BF0B','Mac-F60DEB81FF30ACF6','Mac-C3EC7CD22292981F','Mac-F22C8AC8','Mac-7BA5B2794B2CDB12','Mac-CF21D135A7D34AA6','Mac-BE088AF8C5EB4FA2','Mac-112B0A653D3AAB9C','Mac-DB15BD556843C820','Mac-F22589C8','Mac-77F17D7DA9285301','Mac-F2238AC8','Mac-942452F5819B1C1B','Mac-551B86E5744E2388','Mac-F221DCC8','Mac-94245B3640C91C81','Mac-EE2EBD4B90B839A8','Mac-4BC72D62AD45599E','Mac-F305150B0C7DEEEF','Mac-2BD1B31983FE1663','Mac-66E35819EE2D0D05','Mac-A369DDC4E67F1C45','Mac-F2268CC8','Mac-94245A3940C91C80','Mac-E43C1C25D4880AD6','Mac-942B5BF58194151B',];
+	var cpuFeatures = system.sysctl( 'machdep.cpu.features' );
+	cpuFeatures=cpuFeatures.split(" ");
+	for( var i = 0; i &lt; cpuFeatures.length; i++ ){
+		if( cpuFeatures[i] == "VMM" ){
+			return true;
+		}
+	}
+	var nonSupportedModels = ['MacBookPro4,1','MacPro2,1','MacBookPro5,1','MacBookPro1,1','MacBookPro5,3','MacBookPro5,2','iMac8,1','MacBookPro5,4','iMac5,1','iMac5,2','iMac6,1','MacBookPro3,1','MacBookPro1,2','iMac9,1','Macmini3,1','Macmini1,1','iMac4,2','MacBookPro2,2','MacBookPro2,1','MacBook3,1','MacBook5,1','MacBook5,2','MacBook2,1','iMac4,1','MacBook1,1','MacBookPro5,5','Xserve2,1','MacBookAir1,1','Xserve3,1','MacBookAir2,1','Xserve1,1','Macmini2,1','MacPro3,1','iMac7,1','MacBook4,1','MacPro1,1','MacPro4,1',];
+	var currentModel = system.sysctl('hw.model');
+	if (nonSupportedModels.indexOf(currentModel) &gt;= 0) {
+		my.result.message = system.localizedString('ERROR_C94537EB4C');
+		my.result.type = 'Fatal';
+		return false;
+	}
+	var boardId = system.ioregistry.fromPath('IOService:/')['board-id'];
+	if (boardIds.indexOf(boardId) == -1) {
+		if (system.compareVersions(system.version.ProductVersion, '10.13') &gt;= 0 &amp;&amp; system.compareVersions(system.version.ProductVersion, '10.14') &lt; 0) {
+			my.result.message = system.localizedString('ERROR_B14B14D9B7');
+		} else {
+			my.result.message = system.localizedString('ERROR_C94537EB4C');
+		}
+		my.result.type = 'Fatal';
+		return false;
+	}
+	if (system.compareVersions(system.version.ProductVersion, '10.8') &lt; 0) {
+		my.result.message = system.localizedStringWithFormat('ERROR_B85E600482', '10.8');
+		my.result.type = 'Fatal';
+		return false;
+	}
+	return true;
+}
+function VolumeCheck(prefix) {
+	var myTargetSystemVersion = (my.target.systemVersion || system.files.plistAtPath(my.target.mountpoint + "/System/Library/CoreServices/SystemVersion.plist"));
+	my.result.message = system.localizedString('ERROR_ABA5BBB51F');
+	if (!ManagedPolicyCheck0(my.target.mountpoint)) {
+		my.result.type = 'Fatal';
+		return false;
+	}
+	return true;
+}
+function ManagedPolicyCheck0(prefix) {
+	if (typeof(my.result) != 'undefined') my.result.message = system.localizedString('ERROR_004301F002');
+	var managedPolicyPlistPath = '/Library/Managed Preferences/com.apple.SoftwareUpdate.plist';
+	var managedPolicyPlistKey = 'AllowPreReleaseInstallation';
+	try {
+		if ((system.files.plistAtPath(managedPolicyPlistPath)[managedPolicyPlistKey] == false) || (system.files.plistAtPath(my.target.mountpoint + managedPolicyPlistPath)[managedPolicyPlistKey] == false)) {
+			return false;
+		} else {
+			return true;
+		}
+	} catch(e) {}
+	return true;
+}
+</script>
+    <localization>
+        <strings language="English">"SU_TITLE" = "Install macOS High Sierra Beta";
+"SU_VERS" = "10.13.4";
+"SU_SERVERCOMMENT" = "For Desktop and Server systems";
+"SU_DESCRIPTION" = '&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;
+';
+</strings>
+    </localization>
+    <pkg-ref id="OSInstall.mpkg" installKBytes="0" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="InstallAssistantAuto" installKBytes="25282" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="RecoveryHDMetaDmg" installKBytes="0" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="InstallESDDmg" installKBytes="0" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="InstallInfo.plist" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="AppleDiagnostics.dmg" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="BaseSystem.chunklist" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="InstallESDDmg.chunklist" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="AppleDiagnostics.chunklist" version="10.13.4.0.0.1519192521"/>
+    <pkg-ref id="BaseSystem.dmg" version="10.13.4.0.0.1519192521"/>
+</installer-gui-script>

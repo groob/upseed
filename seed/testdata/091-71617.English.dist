@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<installer-gui-script minSpecVersion="1">
+    <options affects-system-files="true" should-authenticate-reboot="true" allow-install-later="true" post-logout="true" should-launch-first-login-optimization="true"/>
+    <title>SU_TITLE</title>
+    <script/>
+    <volume-check script="VolumeCheck()"/>
+    <installation-check script="InstallationCheck()"/>
+    <bridge-version build-version="15.16.2542.0.0" build-group="0"/>
+    <auxinfo>
+        <dict>
+            <key>macOSProductBuildVersion</key>
+            <string>17D2104</string>
+            <key>macOSProductVersion</key>
+            <string>10.13.3</string>
+            <key>macOSVariant</key>
+            <string>Customer</string>
+        </dict>
+    </auxinfo>
+    <system-image id="macOSUpd10.13.3iMacProSupplemental.RecoveryHDUpdate">
+        <pkg-ref id="com.apple.pkg.macOSUpd10.13.3iMacProSupplemental.RecoveryHDUpdate.17D2104"/>
+    </system-image>
+    <tags>
+        <tag>MacBuddyInstallableUpdate</tag>
+        <tag>macOS</tag>
+    </tags>
+    <platforms>
+        <client arch="i386"/>
+        <server arch="i386"/>
+    </platforms>
+    <choices-outline>
+        <line choice="macOSUpd10.13.3iMacProSupplemental"/>
+    </choices-outline>
+    <choices-outline ui="SoftwareUpdate">
+        <line choice="macOSUpd10.13.3iMacProSupplemental"/>
+    </choices-outline>
+    <choice id="macOSUpd10.13.3iMacProSupplemental" description-mime-type="text/html" secondaryDescription="SU_SERVERCOMMENT" suDisabledGroupID="macOS High Sierra 10.13.3 Supplemental Update" start_selected="true" versStr="SU_VERS" description="SU_DESCRIPTION" title="SU_TITLE" visible="PlistCheck8(my.target.mountpoint)" start_enabled="true">
+        <pkg-ref id="com.apple.pkg.update.os.10.13.3iMacProSupplemental.17D2104" auth="Root" packageIdentifier="com.apple.pkg.update.os.10.13.3iMacProSupplemental.17D2104" onConclusion="RequireRestart">macOSUpd10.13.3iMacProSupplemental.pkg</pkg-ref>
+        <pkg-ref id="com.apple.pkg.macOSUpd10.13.3iMacProSupplemental.RecoveryHDUpdate.17D2104" auth="Root" packageIdentifier="com.apple.pkg.macOSUpd10.13.3iMacProSupplemental.RecoveryHDUpdate.17D2104" active="RecoveryHD9(my.target.mountpoint)" installEnvironment="ClientOS">macOSUpd10.13.3iMacProSupplemental.RecoveryHDUpdate.pkg</pkg-ref>
+        <pkg-ref id="com.apple.pkg.macOSBrain" auth="Root" packageIdentifier="com.apple.pkg.macOSBrain" installEnvironment="ClientOS">macOSBrain.pkg</pkg-ref>
+        <pkg-ref id="com.apple.pkg.EmbeddedOSFirmware" auth="Root" packageIdentifier="com.apple.pkg.EmbeddedOSFirmware">EmbeddedOSFirmware.pkg</pkg-ref>
+    </choice>
+    <script>
+function isCoreStorageOperationsAllowed (){
+	try {
+		if ( my.target.isDisallowedForCoreStorageOperations ) {
+			return false;
+		}
+	} catch(e) {
+		system.log('isDisallowedForCoreStorageOperations threw exception ' + e);
+	}
+	return true;
+}
+function InstallationCheck(prefix) {
+	var boardIds = ['Mac-7BA5B2D9E42DDD94',];
+	var cpuFeatures = system.sysctl( 'machdep.cpu.features' );
+	cpuFeatures=cpuFeatures.split(" ");
+	for( var i = 0; i &lt; cpuFeatures.length; i++ ){
+		if( cpuFeatures[i] == "VMM" ){
+			return true;
+		}
+	}
+	var nonSupportedModels = ['MacBookPro4,1','MacPro2,1','MacBookPro5,1','MacBookPro1,1','MacBookPro5,3','MacBookPro5,2','iMac8,1','MacBookPro5,4','iMac5,1','iMac5,2','iMac6,1','MacBookPro3,1','MacBookPro1,2','iMac9,1','Macmini3,1','Macmini1,1','iMac4,2','MacBookPro2,2','MacBookPro2,1','MacBook3,1','MacBook5,1','MacBook5,2','MacBook2,1','iMac4,1','MacBook1,1','MacBookPro5,5','Xserve2,1','MacBookAir1,1','Xserve3,1','MacBookAir2,1','Xserve1,1','Macmini2,1','MacPro3,1','iMac7,1','MacBook4,1','MacPro1,1','MacPro4,1',];
+	var currentModel = system.sysctl('hw.model');
+	if (nonSupportedModels.indexOf(currentModel) &gt;= 0) {
+		my.result.message = system.localizedString('ERROR_3491501876');
+		my.result.type = 'Fatal';
+		return false;
+	}
+	var boardId = system.ioregistry.fromPath('IOService:/')['board-id'];
+	if (boardIds.indexOf(boardId) == -1) {
+		my.result.message = system.localizedString('ERROR_3491501876');
+		my.result.type = 'Fatal';
+		return false;
+	}
+	if (system.compareVersions(system.version.ProductVersion, '10.13') &lt; 0 || system.compareVersions(system.version.ProductVersion, '10.14') &gt;= 0) {
+		my.result.message = system.localizedStringWithFormat('ERROR_7E7AEE96CA', '10.13');
+		my.result.type = 'Fatal';
+		return false;
+	}
+	return true;
+}
+function VolumeCheck(prefix) {
+	var myTargetSystemVersion = (my.target.systemVersion || system.files.plistAtPath(my.target.mountpoint + "/System/Library/CoreServices/SystemVersion.plist"));
+	if (!myTargetSystemVersion || system.compareVersions(myTargetSystemVersion.ProductVersion, '10.13') &lt; 0 || system.compareVersions(myTargetSystemVersion.ProductVersion, '10.14') &gt;= 0) {
+		my.result.message = system.localizedStringWithFormat('ERROR_7E7AEE96CA', '10.13');
+		my.result.type = 'Fatal';
+		return false;
+	}
+	my.result.message = system.localizedString('ERROR_ABA5BBB51F');
+	if (!Not0(my.target.mountpoint) || !Not3(my.target.mountpoint) || !AppleInternalCheck6(my.target.mountpoint) || !PlistCheck7(my.target.mountpoint)) {
+		my.result.type = 'Fatal';
+		return false;
+	}
+	return true;
+}
+function Not0(prefix) {
+	if (typeof(my.result) != 'undefined') my.result.message = system.localizedString('ERROR_B733C538F7');
+	if (!(FileSystem1(prefix) &amp;&amp; FileSystem2(prefix))) {
+		return true;
+	}
+	return false;
+}
+function FileSystem1(prefix) {
+	if (my.target.filesystem &amp;&amp; my.target.filesystem.kind == 'Fusion') {
+		return true;
+	}
+	return false;
+}
+function FileSystem2(prefix) {
+	if (my.target.filesystem &amp;&amp; my.target.filesystem.type == 'apfs') {
+		return true;
+	}
+	return false;
+}
+function Not3(prefix) {
+	if (typeof(my.result) != 'undefined') my.result.message = system.localizedString('ERROR_74CFD58E51');
+	if (!(Bridge4(prefix) &amp;&amp; FileSystem5(prefix))) {
+		return true;
+	}
+	return false;
+}
+function Bridge4(prefix) {
+	if (system.hasOwnProperty('bridge') &amp;&amp; system.bridge.hasOwnProperty('deviceIdentity') &amp;&amp; system.bridge.deviceIdentity.chipID != 0 &amp;&amp; system.bridge.deviceIdentity.boardID != 0) {
+		return true;
+	}
+	return false;
+}
+function FileSystem5(prefix) {
+	if (my.target.filesystem &amp;&amp; my.target.filesystem.type == 'hfs') {
+		return true;
+	}
+	return false;
+}
+function AppleInternalCheck6(prefix) {
+	if (!(system.files.fileExistsAtPath(prefix + '/AppleInternal') &amp;&amp; my.target.receiptForIdentifier('com.apple.pkg.InternalOSContent') &amp;&amp; system.files.fileExistsAtPath(prefix + '/System/Library/Receipts/com.apple.pkg.InternalOSContent.plist'))) {
+		return true;
+	}
+	return false;
+}
+function PlistCheck7(prefix) {
+	var plist = system.files.plistAtPath(prefix + '/System/Library/CoreServices/SystemVersion.plist');
+	if (!plist) {
+		return false;
+	}
+	var plistKeyValue = plist['ProductBuildVersion'];
+	if (!plistKeyValue) {
+		return false;
+	}
+	var buildNumbersArray = '17D2047,17D2102,17D2104'.split(',');
+	if (buildNumbersArray.indexOf(plistKeyValue) &lt; 0) {
+		return false;
+	}
+	return true;
+}
+function PlistCheck8(prefix) {
+	var plist = system.files.plistAtPath(prefix + '/System/Library/CoreServices/SystemVersion.plist');
+	if (!plist) {
+		return false;
+	}
+	var plistKeyValue = plist['ProductBuildVersion'];
+	if (!plistKeyValue) {
+		return false;
+	}
+	if (system.compareVersions(plistKeyValue, '17D2104') &gt;= 0) {
+		return false;
+	}
+	return true;
+}
+function RecoveryHD9(prefix) {
+	if( ! isCoreStorageOperationsAllowed() ) { return false; }
+	if( ! my.target.recoverySystemVersion ) { return true; }
+	var targetRecoveryVersion = my.target.recoverySystemVersion.ProductBuildVersion;
+	if (system.compareVersions( targetRecoveryVersion, '17D2047') &gt;= 0) { return false; }
+	return true;
+}
+</script>
+    <localization>
+        <strings language="English">"SU_TITLE" = "macOS High Sierra 10.13.3 Supplemental Update";
+"SU_VERS" = " ";
+"SU_SERVERCOMMENT" = "For Desktop and Server systems";
+"SU_DESCRIPTION" = '&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+        &lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+        &lt;title&gt;&lt;/title&gt;
+        &lt;style type="text/css"&gt;
+            body {font: 11.0px -apple-system;}
+            p {margin: 0.0px 0.0px 0.0px 0.0px;}
+        &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+    &lt;p class="p1"&gt;The macOS High Sierra 10.13.3 Supplemental Update fixes an issue where using certain character sequences could cause apps to crash. This update is recommended for all users.
+
+&lt;p class="p2"&gt;&lt;br&gt;&lt;/p&gt;
+
+    &lt;p class="p1"&gt;For information on the security content of Apple software updates, please visit this website: &lt;a href="https://support.apple.com/kb/HT201222"&gt;https://support.apple.com/kb/HT201222&lt;/a&gt;&lt;/p&gt;
+
+    &lt;/body&gt;
+&lt;/html&gt;
+';
+</strings>
+    </localization>
+    <pkg-ref id="com.apple.pkg.macOSBrain" installKBytes="170" version="10.13.3.1.1.1519776182"/>
+    <pkg-ref id="com.apple.pkg.update.os.10.13.3iMacProSupplemental.17D2104" installKBytes="126266" version="1.0.0.0.1.1519776182"/>
+    <pkg-ref id="com.apple.pkg.macOSUpd10.13.3iMacProSupplemental.RecoveryHDUpdate.17D2104" installKBytes="0" version="1.0.0.0"/>
+    <pkg-ref id="com.apple.pkg.EmbeddedOSFirmware" installKBytes="62154" version="10.13.3.1.1.1519776182"/>
+</installer-gui-script>
